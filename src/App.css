@@ -15,3 +15,16 @@ div {
   text-align: left;
   border-bottom: 1px solid gray;
 }
+
+.list h2 {
+  cursor: pointer;
+}
+
+.modal {
+  margin-top: 20px;
+  padding: 20px;
+  background: #eee;
+  text-align: left;
+  width: 90%;
+  margin: 20px auto 0;
+}
