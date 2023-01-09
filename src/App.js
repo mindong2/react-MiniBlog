@@ -11,7 +11,8 @@ function App() {
   let [listTitle, setListTitle] = useState(['남자 코트 추천', '강남 우동 맛집', '리액트가 리액트된다']);
   let [like, setLike] = useState([0,0,0]);
   let [modal, setModal] = useState(false);
-
+  let [ModalNum,setModalNum] = useState(0);
+  let [InputVal, setInputVal] = useState('');
   const sortFn = () => {
     let sortTitle = [...listTitle].sort();
     setListTitle(sortTitle);
@@ -46,25 +47,47 @@ function App() {
       { listTitle.map((v, i) =>{
         return(
           <div className ="list" key={i}>
-            <h2 onClick={()=>{setModal(!modal)}}>{ v }</h2>
+            <h2 onClick={()=> {
+              setModal(!modal);
+              setModalNum(i);
+            } }>{ v }</h2>
+            
             <span style={{cursor: 'pointer'}} onClick={() => {
               let addLike = [...like];
               addLike[i]++;
               setLike(addLike);
             }}>👍 {like[i]} </span>
+
+            <button onClick={()=>{
+              let deleteTitle = [...listTitle];
+              deleteTitle.splice(i, 1);
+              setListTitle(deleteTitle);
+            }}>삭제</button>
+
             <p>2월 17일 발행</p>
           </div>
         )
       })
       }
 
-      {/* <div className ="list">
-        <h2 onClick={()=>{setModal(!modal)}}>{ listTitle[2] }</h2>
-        <p>2월 17일 발행</p>
-      </div> */}
+      <input type = "text" className='add_input' onChange={(e) => {setInputVal(e.target.value);}} />
+      <button onClick={() => {
+        if(InputVal !== ''){
+          let addTitle = [...listTitle];
+          let addNum = [...like];
+          addTitle.unshift(InputVal);
+          addNum.unshift(0);
+          setListTitle( addTitle );
+          setLike(addNum);
+          setInputVal('');
+          document.querySelector('.add_input').value = '';
+        }else{
+          alert('제목을 입력하세요!');
+        }
+      }}>글 추가</button>
 
       {
-        modal ? <Modal></Modal> : null
+        modal ? <Modal modalNum = { ModalNum } listTitle = { listTitle } setListTitle = { setListTitle }></Modal> : null
       }
 
       {/* 동적인 UI 3step
@@ -76,14 +99,20 @@ function App() {
   );
 }
 
+// 리액트에서의 props -> <자식 작명 = {state이름}> -> props 파라미터 등록 후 props.작명
 // 컴포넌트 -> function 생성 return () 안에 사용할 html 
 
-const Modal = () => {
+const Modal = (props) => {
   return(
     <div className='modal'>
-      <h4>제목</h4>
+      <h4>{props.listTitle[props.modalNum]}</h4>
       <p>날짜</p>
       <p>상세 내용</p>
+      <button onClick={() => {
+        let copyListTitle = [...props.listTitle];
+        copyListTitle[props.modalNum] = '여자 코트 추천';
+        props.setListTitle(copyListTitle);
+      }}>글수정</button>
     </div>
   )
 }
